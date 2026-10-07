@@ -3,6 +3,7 @@ using Exiled.API.Enums;
 using Exiled.API.Features;
 using HarmonyLib;
 using InventorySystem.Items.Pickups;
+using MEC;
 using PlayerRoles.PlayableScps.Scp106;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -38,48 +39,51 @@ namespace SCP106RagdollFallExiled
         {
             rigidbody = null;
 
-            if (UnityEngine.Random.Range(0, 2) == 1)
+            if (UnityEngine.Random.Range(0, 2) == 1 && CorpseTracker.PlayerRagdolls.Count > 0 && Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
             {
-                if (Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
+                Vector3 rawPosition = pocketItem.DropPosition.Position;
+                bool isSurface = Room.Get(rawPosition)?.Zone == ZoneType.Surface;
+
+                if (rawPosition == Vector3.zero || isSurface)
                 {
-                    Vector3 rawPosition = pocketItem.DropPosition.Position;
+                    Player fallbackTarget = Player.List.FirstOrDefault(p => p.IsAlive && !p.IsInPocketDimension && p.Zone != ZoneType.Surface);
 
-                    if (rawPosition == Vector3.zero)
+                    if (fallbackTarget != null)
                     {
-                        Player fallbackTarget = Player.List.FirstOrDefault(p => p.IsAlive && !p.IsInPocketDimension && p.Zone != ZoneType.Surface);
+                        rawPosition = fallbackTarget.Position;
+                    }
+                    else
+                    {
+                        var validRooms = Room.List.Where(r => r.Zone != ZoneType.Surface).ToList();
 
-                        if (fallbackTarget != null)
+                        if (validRooms.Count > 0)
                         {
-                            rawPosition = fallbackTarget.Position;
-                        }
-                        else
-                        {
-                            var validRooms = Room.List.Where(r => r.Zone != ZoneType.Surface).ToList();
-
-                            if (validRooms.Count > 0)
-                            {
-                                rawPosition = validRooms[UnityEngine.Random.Range(0, validRooms.Count)].Position;
-                            }
+                            rawPosition = validRooms[UnityEngine.Random.Range(0, validRooms.Count)].Position;
                         }
                     }
-
-                    Vector3 dropPos = rawPosition + new Vector3(0, 4f, 0);
-
-                    Log.Debug($"picked ragdoll drop at position {dropPos}");
-                    SpawnPocketRagdoll(dropPos);
                 }
 
-                key.DestroySelf();
-                return false;
+                if (rawPosition != Vector3.zero)
+                {
+                    Vector3 dropPos = rawPosition + new Vector3(0, 2.8f, 0);
+
+                    Log.Debug($"picked ragdoll drop at position {dropPos}");
+                    CorpseTracker.PickRandomRagdoll(dropPos);
+
+                    Timing.CallDelayed(0.1f, () =>
+                    {
+                        if (key != null)
+                        {
+                            key.DestroySelf();
+                        }
+                    });
+
+                    return false;
+                }
             }
 
             Log.Debug($"picked random itemdrop");
             return key.TryGetComponent(out rigidbody);
-        }
-
-        private static void SpawnPocketRagdoll(Vector3 position)
-        {
-            CorpseTracker.PickRandomRagdoll(position);
         }
     }
 
