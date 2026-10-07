@@ -1,7 +1,5 @@
 ﻿using CommandSystem.Commands.RemoteAdmin.Cleanup;
 using CorpsesFallPocketDimension;
-using Exiled.API.Enums;
-using Exiled.API.Features;
 using HarmonyLib;
 using InventorySystem.Items.Pickups;
 using MEC;
@@ -45,8 +43,12 @@ namespace CorpsesFallPocketDimension
                 if (Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
                 {
                     Vector3 dropPos = pocketItem.DropPosition.Position;
+#if EXILED
+                    Exiled.API.Features.Log.Debug($"picked ragdoll drop at position {dropPos}");
+#elif LABAPI
+                    LabApi.Features.Console.Logger.Debug($"picked ragdoll drop at position {dropPos}");
+#endif
 
-                    Log.Debug($"picked ragdoll drop at position {dropPos}");
                     SpawnPocketRagdoll(dropPos);
                 }
 
@@ -60,8 +62,12 @@ namespace CorpsesFallPocketDimension
 
                 return false;
             }
+#if EXILED
+            Exiled.API.Features.Log.Debug($"picked random item drop");
+#elif LABAPI
+            LabApi.Features.Console.Logger.Debug($"picked random item drop");
 
-            Log.Debug($"picked random item drop");
+#endif
             return key.TryGetComponent(out rigidbody);
         }
 
@@ -79,8 +85,12 @@ public static class PatchCleanupCommand
     {
         if (!__result)
             return;
+#if EXILED
+        Exiled.API.Features.Log.Warn("basegame corpse cleanup command was called, clearing corpsetracker list");
+#elif LABAPI
+        LabApi.Features.Console.Logger.Warn("basegame corpse cleanup command was called, clearing corpsetracker list");
+#endif
 
-        Log.Warn("basegame corpse cleanup command was called, clearing corpsetracker list");
         CorpseTracker.PlayerRagdolls.RemoveAll(CorpseTracker.IsRagdollInvalid);
     }
 }

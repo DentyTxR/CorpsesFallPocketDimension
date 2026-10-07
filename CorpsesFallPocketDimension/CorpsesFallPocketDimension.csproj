@@ -7,11 +7,21 @@
 		<Nullable>enable</Nullable>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<Platforms>AnyCPU;x64</Platforms>
+		<Configurations>Debug;Release;EXILED;LABAPI</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'EXILED'">
+		<DefineConstants>EXILED</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'LABAPI'">
+		<DefineConstants>LABAPI</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="ExMod.Exiled" Version="9.14.2" />
 		<PackageReference Include="Lib.Harmony" Version="2.4.2" />
+		<PackageReference Include="Northwood.LabAPI" Version="1.1.7" />
 	</ItemGroup>
 
 	<ItemGroup>

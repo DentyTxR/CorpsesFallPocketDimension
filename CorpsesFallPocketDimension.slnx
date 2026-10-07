@@ -1,3 +1,12 @@
 <Solution>
-  <Project Path="CorpsesFallPocketDimensionExiled/CorpsesFallPocketDimensionExiled.csproj" />
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="EXILED" />
+    <BuildType Name="LABAPI" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="CorpsesFallPocketDimension/CorpsesFallPocketDimension.csproj">
+    <Platform Solution="EXILED|*" Project="x64" />
+    <Platform Solution="LABAPI|*" Project="x64" />
+  </Project>
 </Solution>

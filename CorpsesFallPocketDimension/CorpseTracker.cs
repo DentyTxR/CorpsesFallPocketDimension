@@ -1,4 +1,13 @@
-﻿using Exiled.API.Features;
+﻿#if EXILED
+
+using Exiled.API.Features;
+
+#elif LABAPI
+
+using LabApi.Features.Wrappers;
+
+#endif
+
 using Mirror;
 using PlayerRoles.Ragdolls;
 using RelativePositioning;
@@ -15,7 +24,12 @@ namespace CorpsesFallPocketDimension
             if (r == null) return true;
             try
             {
+#if EXILED
                 return r.GameObject == null;
+#elif LABAPI
+
+                return r.Base.gameObject == null;
+#endif
             }
             catch
             {
@@ -27,7 +41,13 @@ namespace CorpsesFallPocketDimension
         {
             if (ragdoll != null)
             {
+#if EXILED
                 Log.Debug($"registering ragdoll: {ragdoll.GameObject.name}");
+
+#elif LABAPI
+                LabApi.Features.Console.Logger.Debug($"registering ragdoll: {ragdoll.Base.gameObject.name}");
+
+#endif
                 PlayerRagdolls.Add(ragdoll);
             }
         }
@@ -38,19 +58,37 @@ namespace CorpsesFallPocketDimension
 
             if (PlayerRagdolls.Count == 0)
             {
+#if EXILED
                 Log.Warn("no ragdolls found");
+#elif LABAPI
+                LabApi.Features.Console.Logger.Warn("no ragdolls found");
+
+#endif
                 return;
             }
             int randomIndex = UnityEngine.Random.Range(0, PlayerRagdolls.Count);
             Ragdoll pickedRagdoll = PlayerRagdolls[randomIndex];
+#if EXILED
             GameObject ragdollObj = pickedRagdoll.GameObject;
 
+#elif LABAPI
+            GameObject ragdollObj = pickedRagdoll.Base.gameObject;
+
+#endif
+
+#if EXILED
             Log.Debug($"teleporting actual ragdoll: {ragdollObj.name}");
+#elif LABAPI
+            LabApi.Features.Console.Logger.Debug($"teleporting actual ragdoll: {ragdollObj.name}");
+#endif
 
             if (ragdollObj.TryGetComponent<BasicRagdoll>(out var basicRagdoll))
             {
                 RagdollData originalData = basicRagdoll.Info;
 
+                NetworkServer.Destroy(ragdollObj);
+
+#if EXILED
                 RagdollData updatedData = new RagdollData(
                     originalData.OwnerHub,
                     originalData.Handler,
@@ -62,9 +100,23 @@ namespace CorpsesFallPocketDimension
                     NetworkTime.time
                 );
 
-                NetworkServer.Destroy(ragdollObj);
-
                 Ragdoll newRagdoll = Ragdoll.CreateAndSpawn(updatedData);
+
+#elif LABAPI
+                Quaternion rotation = originalData.StartRelativeRotation;
+
+                Ragdoll newRagdoll = Ragdoll.SpawnRagdoll(
+                    originalData.RoleType,
+                    position,
+                    rotation,
+                    originalData.Handler,
+                    originalData.Nickname,
+                    null,
+                    null,
+                    originalData.OwnerHub
+                );
+#endif
+
                 PlayerRagdolls.RemoveAt(randomIndex);
             }
         }
