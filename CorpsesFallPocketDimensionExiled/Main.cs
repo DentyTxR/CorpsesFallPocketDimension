@@ -22,6 +22,7 @@ namespace CorpsesFallPocketDimension
             Harmony = new Harmony($"{Author}.{Name}");
             Harmony.PatchAll(Assembly.GetExecutingAssembly());
 
+            Exiled.Events.Handlers.Server.WaitingForPlayers += EventHandler.OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.SpawnedRagdoll += EventHandler.SpawnedRagdoll;
         }
 
@@ -31,6 +32,7 @@ namespace CorpsesFallPocketDimension
 
             Harmony.UnpatchAll(Harmony.Id);
 
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= EventHandler.OnWaitingForPlayers;
             Exiled.Events.Handlers.Player.SpawnedRagdoll -= EventHandler.SpawnedRagdoll;
 
             EventHandler = null;

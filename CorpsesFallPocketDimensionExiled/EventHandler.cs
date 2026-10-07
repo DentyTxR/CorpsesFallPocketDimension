@@ -6,6 +6,11 @@ namespace CorpsesFallPocketDimension
 {
     public class EventHandler
     {
+        public void OnWaitingForPlayers()
+        {
+            CorpseTracker.PlayerRagdolls.Clear();
+        }
+
         public void SpawnedRagdoll(SpawnedRagdollEventArgs ev)
         {
             if (ev.Ragdoll.Room.Type == RoomType.Pocket)
