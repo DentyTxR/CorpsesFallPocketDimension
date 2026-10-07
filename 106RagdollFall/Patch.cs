@@ -1,0 +1,99 @@
+﻿using CommandSystem.Commands.RemoteAdmin.Cleanup;
+using Exiled.API.Enums;
+using Exiled.API.Features;
+using HarmonyLib;
+using InventorySystem.Items.Pickups;
+using PlayerRoles.PlayableScps.Scp106;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using UnityEngine;
+
+namespace SCP106RagdollFall
+{
+    [HarmonyPatch(typeof(Scp106PocketItemManager), nameof(Scp106PocketItemManager.Update))]
+    public static class Scp106PocketItemManagerTranspiler
+    {
+        [HarmonyTranspiler]
+        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var matcher = new CodeMatcher(instructions);
+
+            matcher.MatchStartForward(new CodeMatch(i =>
+                i.opcode == OpCodes.Callvirt &&
+                i.operand is MethodInfo mi &&
+                mi.Name == nameof(Component.TryGetComponent)
+            ));
+
+            if (matcher.IsInvalid)
+            {
+                return instructions;
+            }
+
+            matcher.SetInstruction(new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Scp106PocketItemManagerTranspiler), nameof(CustomDrop))));
+
+            return matcher.Instructions();
+        }
+
+        private static bool CustomDrop(ItemPickupBase key, out Rigidbody rigidbody)
+        {
+            rigidbody = null;
+
+            if (UnityEngine.Random.Range(0, 2) == 1)
+            {
+                if (Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
+                {
+                    Vector3 rawPosition = pocketItem.DropPosition.Position;
+
+                    if (rawPosition == Vector3.zero)
+                    {
+                        Player fallbackTarget = Player.List.FirstOrDefault(p => p.IsAlive && !p.IsInPocketDimension && p.Zone != ZoneType.Surface);
+
+                        if (fallbackTarget != null)
+                        {
+                            rawPosition = fallbackTarget.Position;
+                        }
+                        else
+                        {
+                            var validRooms = Room.List.Where(r => r.Zone != ZoneType.Surface).ToList();
+
+                            if (validRooms.Count > 0)
+                            {
+                                rawPosition = validRooms[UnityEngine.Random.Range(0, validRooms.Count)].Position;
+                            }
+                        }
+                    }
+
+                    Vector3 dropPos = rawPosition + new Vector3(0, 4f, 0);
+
+                    Log.Debug($"picked ragdoll drop at position {dropPos}");
+                    SpawnPocketRagdoll(dropPos);
+                }
+
+                key.DestroySelf();
+                return false;
+            }
+
+            Log.Debug($"picked random itemdrop");
+            return key.TryGetComponent(out rigidbody);
+        }
+
+        private static void SpawnPocketRagdoll(Vector3 position)
+        {
+            CorpseTracker.PickRandomRagdoll(position);
+        }
+    }
+
+    [HarmonyPatch(typeof(CorpsesCommand), nameof(CorpsesCommand.Execute))]
+    public static class PatchCleanupCommand
+    {
+        public static void Postfix(bool __result)
+        {
+            if (!__result)
+                return;
+
+            Log.Warn("basegame corpse cleanup command was called, clearing corpsetracker list");
+            CorpseTracker.PlayerRagdolls.RemoveAll(r => r == null || r.GameObject == null);
+        }
+    }
+}
