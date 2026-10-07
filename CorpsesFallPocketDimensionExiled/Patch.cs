@@ -1,16 +1,16 @@
 ﻿using CommandSystem.Commands.RemoteAdmin.Cleanup;
+using CorpsesFallPocketDimension;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using HarmonyLib;
 using InventorySystem.Items.Pickups;
 using MEC;
 using PlayerRoles.PlayableScps.Scp106;
-using SCP106RagdollFallExiled;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 
-namespace SCP106RagdollFallExiled
+namespace CorpsesFallPocketDimension
 {
     [HarmonyPatch(typeof(Scp106PocketItemManager), nameof(Scp106PocketItemManager.Update))]
     public static class Scp106PocketItemManagerTranspiler
@@ -40,7 +40,7 @@ namespace SCP106RagdollFallExiled
         {
             rigidbody = null;
 
-            if (UnityEngine.Random.value < 0.5f && CorpseTracker.PlayerRagdolls.Count > 0)
+            if (UnityEngine.Random.value > Main.Singleton.Config.ChanceToDropCorpse && CorpseTracker.PlayerRagdolls.Count > 0)
             {
                 if (Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
                 {

@@ -2,13 +2,13 @@
 using HarmonyLib;
 using System.Reflection;
 
-namespace SCP106RagdollFallExiled
+namespace CorpsesFallPocketDimension
 {
     public class Main : Plugin<Config>
     {
-        public override string Name => "scp106RagdollFall";
+        public override string Name => "CorpsesFallPocketDimension";
         public override string Author => "Denty";
-        public override Version Version { get; } = new(1, 0, 0);
+        public override Version Version { get; } = new(1, 0, 1);
 
         public static Main Singleton;
         private EventHandler EventHandler;

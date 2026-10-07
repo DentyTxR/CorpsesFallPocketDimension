@@ -4,7 +4,7 @@ using PlayerRoles.Ragdolls;
 using RelativePositioning;
 using UnityEngine;
 
-namespace SCP106RagdollFallExiled
+namespace CorpsesFallPocketDimension
 {
     public class CorpseTracker
     {
