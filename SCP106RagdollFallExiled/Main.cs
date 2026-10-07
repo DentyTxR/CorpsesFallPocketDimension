@@ -22,7 +22,6 @@ namespace SCP106RagdollFallExiled
             Harmony = new Harmony($"{Author}.{Name}");
             Harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-            Exiled.Events.Handlers.Player.Spawning += EventHandler.Spawning;
             Exiled.Events.Handlers.Player.SpawnedRagdoll += EventHandler.SpawnedRagdoll;
         }
 
@@ -32,7 +31,6 @@ namespace SCP106RagdollFallExiled
 
             Harmony.UnpatchAll(Harmony.Id);
 
-            Exiled.Events.Handlers.Player.Spawning -= EventHandler.Spawning;
             Exiled.Events.Handlers.Player.SpawnedRagdoll -= EventHandler.SpawnedRagdoll;
 
             EventHandler = null;
