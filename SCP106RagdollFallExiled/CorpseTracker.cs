@@ -2,14 +2,9 @@
 using Mirror;
 using PlayerRoles.Ragdolls;
 using RelativePositioning;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace SCP106RagdollFall
+namespace SCP106RagdollFallExiled
 {
     public class CorpseTracker
     {

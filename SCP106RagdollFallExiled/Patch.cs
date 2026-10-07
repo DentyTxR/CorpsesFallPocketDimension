@@ -4,12 +4,11 @@ using Exiled.API.Features;
 using HarmonyLib;
 using InventorySystem.Items.Pickups;
 using PlayerRoles.PlayableScps.Scp106;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 
-namespace SCP106RagdollFall
+namespace SCP106RagdollFallExiled
 {
     [HarmonyPatch(typeof(Scp106PocketItemManager), nameof(Scp106PocketItemManager.Update))]
     public static class Scp106PocketItemManagerTranspiler

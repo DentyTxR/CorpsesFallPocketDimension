@@ -1,7 +1,7 @@
 ﻿using Exiled.API.Interfaces;
 using System.ComponentModel;
 
-namespace SCP106RagdollFall
+namespace SCP106RagdollFallExiled
 {
     public class Config : IConfig
     {

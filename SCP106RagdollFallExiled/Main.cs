@@ -1,10 +1,8 @@
-﻿using CommandSystem;
-using Exiled.API.Features;
+﻿using Exiled.API.Features;
 using HarmonyLib;
 using System.Reflection;
-using UnityEngine;
 
-namespace SCP106RagdollFall
+namespace SCP106RagdollFallExiled
 {
     public class Main : Plugin<Config>
     {
