@@ -40,7 +40,7 @@ namespace CorpsesFallPocketDimension
         {
             rigidbody = null;
 
-            if (UnityEngine.Random.value > Main.Singleton.Config.ChanceToDropCorpse && CorpseTracker.PlayerRagdolls.Count > 0)
+            if (UnityEngine.Random.value <= Main.Singleton.Config.ChanceToDropCorpse && CorpseTracker.PlayerRagdolls.Count > 0)
             {
                 if (Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
                 {
