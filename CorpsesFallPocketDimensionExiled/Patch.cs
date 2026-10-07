@@ -81,6 +81,6 @@ public static class PatchCleanupCommand
             return;
 
         Log.Warn("basegame corpse cleanup command was called, clearing corpsetracker list");
-        CorpseTracker.PlayerRagdolls.Clear();
+        CorpseTracker.PlayerRagdolls.RemoveAll(CorpseTracker.IsRagdollInvalid);
     }
 }

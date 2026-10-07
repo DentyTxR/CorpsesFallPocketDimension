@@ -10,6 +10,19 @@ namespace CorpsesFallPocketDimension
     {
         public static List<Ragdoll> PlayerRagdolls = new();
 
+        public static bool IsRagdollInvalid(Ragdoll r)
+        {
+            if (r == null) return true;
+            try
+            {
+                return r.GameObject == null;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
         public static void Register(Ragdoll ragdoll)
         {
             if (ragdoll != null)
@@ -21,14 +34,13 @@ namespace CorpsesFallPocketDimension
 
         public static void PickRandomRagdoll(Vector3 position)
         {
-            PlayerRagdolls.RemoveAll(r => r == null || r.GameObject == null);
+            PlayerRagdolls.RemoveAll(IsRagdollInvalid);
 
             if (PlayerRagdolls.Count == 0)
             {
                 Log.Warn("no ragdolls found");
                 return;
             }
-
             int randomIndex = UnityEngine.Random.Range(0, PlayerRagdolls.Count);
             Ragdoll pickedRagdoll = PlayerRagdolls[randomIndex];
             GameObject ragdollObj = pickedRagdoll.GameObject;
