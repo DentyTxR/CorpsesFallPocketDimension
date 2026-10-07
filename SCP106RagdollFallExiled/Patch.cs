@@ -5,6 +5,7 @@ using HarmonyLib;
 using InventorySystem.Items.Pickups;
 using MEC;
 using PlayerRoles.PlayableScps.Scp106;
+using SCP106RagdollFallExiled;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -39,64 +40,47 @@ namespace SCP106RagdollFallExiled
         {
             rigidbody = null;
 
-            if (UnityEngine.Random.Range(0, 2) == 1 && CorpseTracker.PlayerRagdolls.Count > 0 && Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
+            if (UnityEngine.Random.value < 0.5f && CorpseTracker.PlayerRagdolls.Count > 0)
             {
-                Vector3 rawPosition = pocketItem.DropPosition.Position;
-                bool isSurface = Room.Get(rawPosition)?.Zone == ZoneType.Surface;
-
-                if (rawPosition == Vector3.zero || isSurface)
+                if (Scp106PocketItemManager.TrackedItems.TryGetValue(key, out var pocketItem))
                 {
-                    Player fallbackTarget = Player.List.FirstOrDefault(p => p.IsAlive && !p.IsInPocketDimension && p.Zone != ZoneType.Surface);
-
-                    if (fallbackTarget != null)
-                    {
-                        rawPosition = fallbackTarget.Position;
-                    }
-                    else
-                    {
-                        var validRooms = Room.List.Where(r => r.Zone != ZoneType.Surface).ToList();
-
-                        if (validRooms.Count > 0)
-                        {
-                            rawPosition = validRooms[UnityEngine.Random.Range(0, validRooms.Count)].Position;
-                        }
-                    }
-                }
-
-                if (rawPosition != Vector3.zero)
-                {
-                    Vector3 dropPos = rawPosition + new Vector3(0, 2.8f, 0);
+                    Vector3 dropPos = pocketItem.DropPosition.Position;
 
                     Log.Debug($"picked ragdoll drop at position {dropPos}");
-                    CorpseTracker.PickRandomRagdoll(dropPos);
-
-                    Timing.CallDelayed(0.1f, () =>
-                    {
-                        if (key != null)
-                        {
-                            key.DestroySelf();
-                        }
-                    });
-
-                    return false;
+                    SpawnPocketRagdoll(dropPos);
                 }
+
+                Timing.CallDelayed(0.1f, () =>
+                {
+                    if (key != null)
+                    {
+                        key.DestroySelf();
+                    }
+                });
+
+                return false;
             }
 
-            Log.Debug($"picked random itemdrop");
+            Log.Debug($"picked random item drop");
             return key.TryGetComponent(out rigidbody);
         }
-    }
 
-    [HarmonyPatch(typeof(CorpsesCommand), nameof(CorpsesCommand.Execute))]
-    public static class PatchCleanupCommand
-    {
-        public static void Postfix(bool __result)
+        private static void SpawnPocketRagdoll(Vector3 position)
         {
-            if (!__result)
-                return;
-
-            Log.Warn("basegame corpse cleanup command was called, clearing corpsetracker list");
-            CorpseTracker.PlayerRagdolls.RemoveAll(r => r == null || r.GameObject == null);
+            CorpseTracker.PickRandomRagdoll(position);
         }
+    }
+}
+
+[HarmonyPatch(typeof(CorpsesCommand), nameof(CorpsesCommand.Execute))]
+public static class PatchCleanupCommand
+{
+    public static void Postfix(bool __result)
+    {
+        if (!__result)
+            return;
+
+        Log.Warn("basegame corpse cleanup command was called, clearing corpsetracker list");
+        CorpseTracker.PlayerRagdolls.RemoveAll(r => r == null || r.GameObject == null);
     }
 }
