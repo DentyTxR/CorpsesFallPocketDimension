@@ -23,6 +23,9 @@ namespace CorpsesFallPocketDimension
 
         [Description("Whether or not to apply the custom sinkhole animation corpses that drop.")]
         public bool ApplyCustomSinkholeToCorpses { get; set; } = true;
+
+        [Description("Delay in seconds for when to play the sinkhole animation when the game picks a drop location.")]
+        public float SinkholeDelay { get; set; } = 1f;
     }
 
 #elif LABAPI
@@ -39,6 +42,9 @@ namespace CorpsesFallPocketDimension
 
         [Description("Whether or not to apply the custom sinkhole animation corpses that drop.")]
         public bool ApplyCustomSinkholeToCorpses { get; set; } = true;
+
+        [Description("Delay in seconds for when to play the sinkhole animation when the game picks a drop location.")]
+        public float SinkholeDelay { get; set; } = 1f;
     }
 
 #endif

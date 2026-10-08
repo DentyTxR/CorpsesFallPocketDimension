@@ -1,4 +1,5 @@
 ﻿using CommandSystem.Commands.RemoteAdmin.Cleanup;
+using CorpsesFallPocketDimension.Components;
 using CorpsesFallPocketDimension.Features;
 using HarmonyLib;
 using Hazards;
@@ -60,7 +61,14 @@ namespace CorpsesFallPocketDimension
 #endif
             {
                 NetworkServer.SendToAll(msg, channelId, record);
-                SpawnSinkhole(msg.Position.Position);
+#if EXILED
+                Timing.CallDelayed(Main.Singleton.Config.SinkholeDelay, () =>
+#elif LABAPI
+                Timing.CallDelayed(Main.Singleton.Config.SinkholeDelay, () =>
+#endif
+                {
+                    SpawnSinkhole(msg.Position.Position);
+                });
             }
 #if EXILED
             else if (Main.Singleton.Config.ApplyCustomSinkholeToItems)
@@ -69,7 +77,14 @@ namespace CorpsesFallPocketDimension
 #endif
             {
                 NetworkServer.SendToAll(msg, channelId, record);
-                SpawnSinkhole(msg.Position.Position);
+#if EXILED
+                Timing.CallDelayed(Main.Singleton.Config.SinkholeDelay, () =>
+#elif LABAPI
+                Timing.CallDelayed(Main.Singleton.Config.SinkholeDelay, () =>
+#endif
+                {
+                    SpawnSinkhole(msg.Position.Position);
+                });
             }
             else
             {
@@ -146,16 +161,13 @@ namespace CorpsesFallPocketDimension
             hazardInstance.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             hazardInstance.transform.rotation = Quaternion.Euler(180f, 0f, 0f);
 
-            if (hazardInstance.TryGetComponent<Collider>(out var col))
-            {
-                col.enabled = false;
-            }
+            hazardInstance.gameObject.AddComponent<CustomHazardComponent>();
 
             hazardInstance.IsActive = true;
 
             NetworkServer.Spawn(hazardInstance.gameObject);
 
-            Timing.CallDelayed(4.5f, () =>
+            Timing.CallDelayed(4f, () =>
             {
                 if (hazardInstance != null && hazardInstance.gameObject)
                 {
@@ -163,6 +175,20 @@ namespace CorpsesFallPocketDimension
                 }
             });
         }
+    }
+}
+
+[HarmonyPatch(typeof(SinkholeEnvironmentalHazard), nameof(SinkholeEnvironmentalHazard.OnEnter))]
+public static class PatchSinkholeOnEnter
+{
+    public static bool Prefix(SinkholeEnvironmentalHazard __instance, ReferenceHub player, ref bool __result)
+    {
+        if (__instance.TryGetComponent<CustomHazardComponent>(out _))
+        {
+            __result = false;
+            return false;
+        }
+        return true;
     }
 }
 
