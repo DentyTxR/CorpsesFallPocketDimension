@@ -1,6 +1,6 @@
 # CorpsesFallPocketDimension
 
-### A simple plugin to also drop corpses from the pocket dimension just like items!
+### A plugin that allows corpses to fall from the pocket dimension, similar to items, with a custom animation used from sinkholes.
 
 <img width="1280" height="720" alt="GET OUT" src="https://github.com/user-attachments/assets/ef44e5ac-cfd4-4ac6-a12a-8ff027b0c017" />
 
