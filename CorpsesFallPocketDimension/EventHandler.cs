@@ -1,10 +1,13 @@
 ﻿#if EXILED
 
+using CorpsesFallPocketDimension.Features;
 using Exiled.API.Enums;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Player;
 
 #elif LABAPI
+
+using CorpsesFallPocketDimension.Features;
 
 #endif
 
@@ -21,22 +24,24 @@ namespace CorpsesFallPocketDimension
         }
 
 #if EXILED
+
         public void SpawnedRagdoll(SpawnedRagdollEventArgs ev)
         {
             if (ev.Ragdoll.Room.Type == RoomType.Pocket)
             {
                 CorpseTracker.Register(ev.Ragdoll);
-                Log.Debug($"ragdoll spawned for {ev.Player.UserId} while in pocket dimension, total tracked corpses: {CorpseTracker.PlayerRagdolls.Count}");
+                Log.Debug($"ragdoll spawned for {ev.Player.Id} while in pocket dimension, total tracked corpses: {CorpseTracker.PlayerRagdolls.Count}");
             }
         }
+
 #elif LABAPI
 
         public void SpawnedRagdoll(PlayerSpawnedRagdollEventArgs ev)
         {
-            if (ev.Player.Room.Name == MapGeneration.RoomName.Pocket)
+            if (ev.Player?.Room?.Name == MapGeneration.RoomName.Pocket)
             {
                 CorpseTracker.Register(ev.Ragdoll);
-                Logger.Debug($"ragdoll spawned for {ev.Player.UserId} while in pocket dimension, total tracked corpses: {CorpseTracker.PlayerRagdolls.Count}");
+                Logger.Debug($"ragdoll spawned for {ev.Player.PlayerId} while in pocket dimension, total tracked corpses: {CorpseTracker.PlayerRagdolls.Count}", Main.Singleton.Config.Debug);
             }
         }
 

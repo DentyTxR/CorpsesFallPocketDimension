@@ -19,7 +19,7 @@ namespace CorpsesFallPocketDimension
     {
         public override string Name => "CorpsesFallPocketDimensionExiled";
         public override string Author => "Denty";
-        public override Version Version { get; } = new(1, 0, 1);
+        public override Version Version { get; } = new(1, 1, 0);
 
         public static Main Singleton;
         private EventHandler EventHandler;
@@ -57,7 +57,7 @@ namespace CorpsesFallPocketDimension
         public override string Name => "CorpsesFallPocketDimensionLabApi";
         public override string Description => "Simple plugin that makes corpses from pocket dimension fall just like items";
         public override string Author => "Denty";
-        public override Version RequiredApiVersion => new Version("1.0.0");
+        public override Version RequiredApiVersion => new Version("1.1.0");
 
         public static Main Singleton;
         private EventHandler EventHandler;

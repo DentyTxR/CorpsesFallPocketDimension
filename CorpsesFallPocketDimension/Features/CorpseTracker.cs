@@ -13,7 +13,7 @@ using PlayerRoles.Ragdolls;
 using RelativePositioning;
 using UnityEngine;
 
-namespace CorpsesFallPocketDimension
+namespace CorpsesFallPocketDimension.Features
 {
     public class CorpseTracker
     {
@@ -45,7 +45,7 @@ namespace CorpsesFallPocketDimension
                 Log.Debug($"registering ragdoll: {ragdoll.GameObject.name}");
 
 #elif LABAPI
-                LabApi.Features.Console.Logger.Debug($"registering ragdoll: {ragdoll.Base.gameObject.name}");
+                LabApi.Features.Console.Logger.Debug($"[CorpseTracker] registering ragdoll: {ragdoll.Base.gameObject.name}", Main.Singleton.Config.Debug);
 
 #endif
                 PlayerRagdolls.Add(ragdoll);
@@ -61,7 +61,7 @@ namespace CorpsesFallPocketDimension
 #if EXILED
                 Log.Warn("no ragdolls found");
 #elif LABAPI
-                LabApi.Features.Console.Logger.Warn("no ragdolls found");
+                LabApi.Features.Console.Logger.Warn("[CorpseTracker] no ragdolls found");
 
 #endif
                 return;
@@ -79,7 +79,7 @@ namespace CorpsesFallPocketDimension
 #if EXILED
             Log.Debug($"teleporting actual ragdoll: {ragdollObj.name}");
 #elif LABAPI
-            LabApi.Features.Console.Logger.Debug($"teleporting actual ragdoll: {ragdollObj.name}");
+            LabApi.Features.Console.Logger.Debug($"[CorpseTracker] teleporting actual ragdoll: {ragdollObj.name}", Main.Singleton.Config.Debug);
 #endif
 
             if (ragdollObj.TryGetComponent<BasicRagdoll>(out var basicRagdoll))
