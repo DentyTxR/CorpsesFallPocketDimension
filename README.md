@@ -20,6 +20,8 @@ chance_to_drop_corpse: 0.5
 apply_custom_sinkhole_to_items: true
 # Whether or not to apply the custom sinkhole animation corpses that drop.
 apply_custom_sinkhole_to_corpses: true
+# Delay in seconds for when to play the sinkhole animation when the game picks a drop location.
+sinkhole_delay: 1
 ```
 
 ## For LabAPI
@@ -35,4 +37,6 @@ chance_to_drop_corpse: 0.5
 apply_custom_sinkhole_to_items: true
 # Whether or not to apply the custom sinkhole animation corpses that drop.
 apply_custom_sinkhole_to_corpses: true
+# Delay in seconds for when to play the sinkhole animation when the game picks a drop location.
+sinkhole_delay: 1
 ```
