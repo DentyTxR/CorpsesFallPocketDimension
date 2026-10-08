@@ -13,7 +13,7 @@
 ### Default Config
 ```yml
 is_enabled: true
-debug: true
+debug: false
 # The chance for a corpse to be dropped instead of an item. THIS IS A FLOAT, 0.5 MEANS 50%, 0.1 MEANS 10%, 1 MEANS 100%
 chance_to_drop_corpse: 0.5
 # Whether or not to apply the custom sinkhole animation items that drop.
